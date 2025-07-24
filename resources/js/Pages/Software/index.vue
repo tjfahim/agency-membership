@@ -4,7 +4,15 @@
       {{ flash?.success }}
     </div>
     <div class="p-6">
-      <h1 class="text-2xl font-bold mb-4">Software List</h1>
+       <div class="flex justify-between items-center mb-4">
+          <h1 class="text-2xl font-bold">Software List</h1>
+          <Link 
+            :href="`/software/create`" 
+            class="block px-4 py-1 ml-5 !text-slate-300 !no-underline rounded bg-blue-700 hover:bg-gray-700 text-sm"
+          >
+            Create Software
+          </Link>
+        </div>
 
       <table class="w-full table-auto border-collapse border border-gray-300">
         <thead class="bg-gray-100">

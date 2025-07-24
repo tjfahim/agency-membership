@@ -1,23 +1,25 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3'
 import { ref, onMounted } from 'vue'
 
-const isSoftwareOpen = ref(false);
-const isPackageOpen = ref(false);
-const isSubscriptionOpen = ref(false);
-const isPaymentOpen = ref(false);
-const isUserOpen = ref(false);
+const isSoftwareOpen = ref(false)
+const isPackageOpen = ref(false)
+const isSubscriptionOpen = ref(false)
+const isPaymentOpen = ref(false)
+const isUserOpen = ref(false)
 
-const user = ref('');
+const user = ref('')
+const currentPath = ref(window.location.pathname)
 
-onMounted(async ()=>{
-    const response = await fetch(route('user'));
-    const data = await response.json();
-    user.value = data.name;
-});
+onMounted(async () => {
+    const response = await fetch(route('user'))
+    const data = await response.json()
+    user.value = data.name
+})
+
 defineOptions({
     name: 'Sidebar'
-});
+})
 </script>
 
 <template>
@@ -25,100 +27,94 @@ defineOptions({
         <div class="sb-sidenav-menu">
             <div class="nav">
                 <div class="ml-6 my-2">
-                    <Link :href="`/`" class="!text-gray-400 !no-underline hover:!no-underline  hover:!text-gray-200 flex gap-2">
-                Dashboard</Link>
+                    <Link
+                        :href="`/`"
+                        :class="[
+                            'flex gap-2 !text-gray-400 !no-underline hover:!no-underline hover:!text-gray-200',
+                            currentPath === '/' ? '!text-white font-semibold' : ''
+                        ]"
+                    >
+                        Dashboard
+                    </Link>
                 </div>
+
                 <!-- Software -->
-                <div @click="isSoftwareOpen = !isSoftwareOpen"
-                    class="flex items-center justify-between cursor-pointer px-4 py-2 hover:bg-gray-700  my-2">
+                <Link
+                    :href="`/software`"
+                    :class="[
+                        'flex items-center justify-between cursor-pointer px-4 py-2 my-2 !text-slate-300 !no-underline',
+                        currentPath.startsWith('/software') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
+                    ]"
+                >
                     <div class="flex items-center gap-2">
                         <i class="fas fa-columns"></i>
-                        <span>Software</span>
+                        <span>Software Manage</span>
                     </div>
-                    <span v-if="isSoftwareOpen"><i class="fas fa-angle-down transition-transform duration-300"></i></span>
-                    <span v-else><i class="fas fa-angle-right transition-transform duration-300"></i></span>
-                </div>
+                </Link>
 
-                <!-- Nested Links -->
-                <div v-if="isSoftwareOpen" class="ml-6  transition-all mb-3">
-                    <Link :href="`/software`" class="block px-4  py-1 ml-5  !text-slate-300 !no-underline rounded hover:bg-gray-700 text-sm">Index Software</Link>
-                    <Link :href="`/software/create`" class="block px-4 py-1  ml-5 !text-slate-300 !no-underline rounded hover:bg-gray-700 text-sm">Create Software</Link>
-                </div>
-                <!-- End Software-->
-                 <!-- Pakcage -->
-                <div @click="isPackageOpen = !isPackageOpen"
-                    class="flex items-center justify-between cursor-pointer px-4 hover:bg-gray-700 my-2">
+                <!-- Package -->
+                <Link
+                    :href="`/package`"
+                    :class="[
+                        'flex items-center justify-between cursor-pointer px-4 py-2 my-2 !text-slate-300 !no-underline',
+                        currentPath.startsWith('/package') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
+                    ]"
+                >
                     <div class="flex items-center gap-2">
                         <i class="fas fa-columns"></i>
-                        <span>Package</span>
+                        <span>Package Manage</span>
                     </div>
-                   <span v-if="isPackageOpen"><i class="fas fa-angle-down transition-transform duration-300"></i></span>
-                    <span v-else><i class="fas fa-angle-right transition-transform duration-300"></i></span>
-                </div>
-
-                <!-- Nested Links -->
-                <div v-if="isPackageOpen" class="ml-6  transition-all mb-3">
-                    <Link :href="`/package`" class="block px-4 py-1  ml-5 !text-slate-300 !no-underline rounded hover:bg-gray-700 text-sm">Index Package</Link>
-                    <Link :href="`/package/create`" class="block px-4 py-1  ml-5 !text-slate-300 !no-underline rounded hover:bg-gray-700 text-sm">Create Package</Link>
-                </div>
-                <!-- End Pakcage-->
+                </Link>
 
                 <!-- Subscription -->
-                <div @click="isSubscriptionOpen = !isSubscriptionOpen"
-                    class="flex items-center justify-between cursor-pointer px-4   hover:bg-gray-700  my-2">
+                <Link
+                    :href="`/subscription`"
+                    :class="[
+                        'flex items-center justify-between cursor-pointer px-4 py-2 my-2 !text-slate-300 !no-underline',
+                        currentPath.startsWith('/subscription') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
+                    ]"
+                >
                     <div class="flex items-center gap-2">
                         <i class="fas fa-columns"></i>
-                        <span>Subscription</span>
+                        <span>Subscription Manage</span>
                     </div>
-                   <span v-if="isSubscriptionOpen"><i class="fas fa-angle-down transition-transform duration-300"></i></span>
-                    <span v-else><i class="fas fa-angle-right transition-transform duration-300"></i></span>
-                </div>
-
-                <!-- Nested Links -->
-                <div v-if="isSubscriptionOpen" class="ml-6  transition-all mb-3">
-                    <Link :href="`/subscription`" class="block px-4 py-1  ml-5 !text-slate-300 !no-underline rounded hover:bg-gray-700 text-sm">Index Subscription</Link>
-                </div>
-                <!-- End Subscriptions-->
+                </Link>
 
                 <!-- Payment -->
-                <div @click="isPaymentOpen = !isPaymentOpen"
-                    class="flex items-center justify-between cursor-pointer px-4   hover:bg-gray-700  my-2">
+                <Link
+                    :href="`/payment`"
+                    :class="[
+                        'flex items-center justify-between cursor-pointer px-4 py-2 my-2 !text-slate-300 !no-underline',
+                        currentPath.startsWith('/payment') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
+                    ]"
+                >
                     <div class="flex items-center gap-2">
                         <i class="fas fa-columns"></i>
-                        <span>Payment</span>
+                        <span>Payment Manage</span>
                     </div>
-                    <span v-if="isPaymentOpen"><i class="fas fa-angle-down transition-transform duration-300"></i></span>
-                    <span v-else><i class="fas fa-angle-right transition-transform duration-300"></i></span>
-                </div>
+                </Link>
 
-                <!-- Nested Links -->
-                <div v-if="isPaymentOpen" class="ml-6  transition-all mb-3">
-                    <Link :href="`/payment`" class="block px-4 py-1  ml-5 !text-slate-300 !no-underline rounded hover:bg-gray-700 text-sm">Index Payment</Link>
-                    <Link :href="`/payment/create`" class="block px-4 py-1  ml-5 !text-slate-300 !no-underline rounded hover:bg-gray-700 text-sm">Create Payment</Link>
-                </div>
-                <!-- End Payment-->
-                <!-- User -->
-                <div @click="isUserOpen = !isUserOpen"
-                    class="flex items-center justify-between cursor-pointer px-4   hover:bg-gray-700  my-2">
+                <!-- Users -->
+                <Link
+                    :href="`/users`"
+                    :class="[
+                        'flex items-center justify-between cursor-pointer px-4 py-2 my-2 !text-slate-300 !no-underline',
+                        currentPath.startsWith('/users') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
+                    ]"
+                >
                     <div class="flex items-center gap-2">
                         <i class="fas fa-columns"></i>
-                        <span>User</span>
+                        <span>User Manage</span>
                     </div>
-                    <span v-if="isUserOpen"><i class="fas fa-angle-down transition-transform duration-300"></i></span>
-                    <span v-else><i class="fas fa-angle-right transition-transform duration-300"></i></span>
-                </div>
-
-                <!-- Nested Links -->
-                <div v-if="isUserOpen" class="ml-6  transition-all mb-3">
-                    <Link :href="`/users`" class="block px-4 py-1  ml-5 !text-slate-300 !no-underline rounded hover:bg-gray-700 text-sm">Index User</Link>
-                     <Link :href="`/users/create`" class="block px-4 py-1  ml-5 !text-slate-300 !no-underline rounded hover:bg-gray-700 text-sm">Create User</Link>
-                </div>
-                <!-- End Payment-->
+                </Link>
             </div>
         </div>
+
+        <!-- Optional Footer -->
+        <!--
         <div class="sb-sidenav-footer">
             <div class="small">Logged in as: {{ user }}</div>
-            Start Bootstrap
         </div>
+        -->
     </nav>
 </template>

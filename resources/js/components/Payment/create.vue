@@ -1,6 +1,6 @@
 <template>
-    <div v-if="errors.softwares" class="text-red-500">
-        {{ errors.softwares }}
+    <div v-if="serverError" class="text-red-500 p-2 my-2 bg-slate-200">
+        {{ serverMessage }}
     </div>
     <div class="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50" v-if="popUpModalCreate">
         <div class="absolute inset-0 " @click="$emit('close')"></div>
@@ -93,17 +93,14 @@ const props = defineProps({
     flash: {
         type: Object,
     },
-    popUpModalCreate: {
-        type:Boolean,
-        default: false,
-    },
+    popUpModalCreate: Boolean,
 });
 const packages = page.props.packages;
 const rawPackages = ref([]);
 
 const emit = defineEmits(['close'])
 
-onMounted(async () => {
+onMounted(async() => {
     if (props.flash?.error) {
         showFlash();
     }
@@ -137,12 +134,6 @@ let errors = ref({});
 const submitPayment = () => {
     form.post('/payment', {
         onSuccess: () => {
-            if (props.flash?.software_empty) {
-                // keep modal open and show the flash error
-                 emit('close');
-                console.warn('Software empty error returned from server');
-                return;
-            }
             form.reset();
             console.log('success');
             emit('close');
@@ -155,15 +146,24 @@ const submitPayment = () => {
 }
 
 const processing = form.processing;
-
+const serverError = ref(false);
+const serverMessage = ref('');
 watch(() => form.package_id, (newPkgId) => {
     console.log("Selected package ID:", newPkgId);
-
-    const selectedPackage = rawPackages.value.find(pkg => pkg.id == newPkgId);
+    
+    const selectedPackage = rawPackages.value.find(pkg => pkg.id == newPkgId); 
 
     if (!selectedPackage) {
-        console.warn('Package not found for ID:', newPkgId);
+    console.warn('Package not found for ID:', newPkgId);
+    serverError.value = true;
+    serverMessage.value = 'No software is included in this package. Please select softwares!';
 
+    setTimeout(() => {
+        serverError.value = false;
+        serverMessage.value = '';
+    }, 3000);
+
+    return;
     }
 
     form.amount = selectedPackage.is_free == 1 ? 0 : selectedPackage.price;

@@ -58,7 +58,7 @@
 
               <Link
                 :href="`/package/${row.id}/edit`"
-                class="text-yellow-600 hover:underline"
+                class="text-yellow-600 pl-3 hover:underline"
                 title="Edit Package"
               >
                 <i class="las la-edit text-xl"></i>

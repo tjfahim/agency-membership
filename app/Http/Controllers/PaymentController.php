@@ -24,14 +24,14 @@ class PaymentController extends Controller
         //
         $payments = Payment::select(['id', 'user_id', 'amount', 'payment_method', 'payment_status'])->with(['user:id,name'])->paginate(20);
         $pagination = [
-        'total' => $payments->total(),
-        'per_page' => $payments->perPage(),
-        'current_page' => $payments->currentPage(),
-        'last_page' => $payments->lastPage(),
-        'from' => $payments->firstItem(),
-        'to' => $payments->lastItem(),
-    ];
-        return Inertia::render('Payment/index', ['payments' => $payments,'pagination'=>$pagination]);
+            'total' => $payments->total(),
+            'per_page' => $payments->perPage(),
+            'current_page' => $payments->currentPage(),
+            'last_page' => $payments->lastPage(),
+            'from' => $payments->firstItem(),
+            'to' => $payments->lastItem(),
+        ];
+        return Inertia::render('Payment/index', ['payments' => $payments, 'pagination' => $pagination]);
     }
 
     /**
@@ -75,11 +75,16 @@ class PaymentController extends Controller
                 'assigned_by' => auth()->id(),
             ]);
             $softwares = $subscription->load(['package.softwares']);
-            if(!$subscription->package || $subscription->package->softwares->isEmpty()){
-                throw ValidationException::withMessages([
-                    'software.empty'=>'No software is included in this package. Please select softwares!'
-                ]);
-            }
+            if (!$subscription->package || $subscription->package->softwares->isEmpty()) {
+                // throw ValidationException::withMessages([
+                //     'software.empty'=>'No software is included in this package. Please select softwares!'
+                // ]);
+                return Inertia::render('Payment/index', [
+    'flash' => [
+        'software_empty' => 'No software is included in this package. Please select softwares!',
+    ],
+    ]);
+           }
             Log::info('subscription: ' . $subscription);
             //payment
             $subscription->payments()->create([
@@ -92,10 +97,10 @@ class PaymentController extends Controller
             Log::info('payment created');
             DB::commit();
             Log::info('commited done');
-            
+
             $userStatus = new UserStatus($subscription->user);
             $userStatus->activeStatus();
-            
+
             return to_route('payment.index')->with(['success' => "Payment and Subscription created successfully!"]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -136,15 +141,15 @@ class PaymentController extends Controller
         //
         $validated = $request->validated();
         DB::beginTransaction();
-        
+
         try {
             $duration_map = Package::DURATION_MAP[$request->duration_type];
             $total_duration = intval($request->duration) * intval($duration_map);
             Log::info('try block is running in update method');
             //subscription
-           
+
             $subscription = Subscription::findOrFail($payment->subscription->id);
-            
+
             $subscription->update([
                 'user_id' => $validated['user_id'],
                 'package_id' => $validated['package_id'],
@@ -172,7 +177,6 @@ class PaymentController extends Controller
             Log::error('Error :' . $e->getMessage());
             return to_route('payment.index')->with(['error ' => 'Something went wrong!']);
         }
-
     }
 
     /**
@@ -181,7 +185,7 @@ class PaymentController extends Controller
     public function destroy(Payment $payment)
     {
         //
-        Subscription::where('id',$payment->subscription_id)->delete();
+        Subscription::where('id', $payment->subscription_id)->delete();
         $payment->delete();
         return to_route('payment.index')->with(['success' => 'Deleted Successfully']);
     }

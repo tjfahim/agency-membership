@@ -24,7 +24,8 @@ class PackageController extends Controller
             'from' => $packages->firstItem(),
             'to' => $packages->lastItem(),
         ];
-        return Inertia::render('Package/index', ['packages' => $packages, 'pagination' => $pagination]);
+        $softwares = Software::all();
+        return Inertia::render('Package/index', ['packages' => $packages, 'pagination' => $pagination,'softwares'=>$softwares]);
     }
 
     /**
@@ -72,7 +73,7 @@ class PackageController extends Controller
     {
         //
         $ourPackage = Package::findOrFail($id);
-        return Inertia::render('Package/show', ['ourPackage' => $ourPackage, 'softwares' => $ourPackage->softwares]);
+        return response()->json(['ourPackage' => $ourPackage, 'softwares' => $ourPackage->softwares]);
     }
 
     /**
@@ -92,6 +93,7 @@ class PackageController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        
         $request->validate([
             'name' => ['required', 'string', 'min:3', 'max:100'],
             'price' => ['required', 'numeric'],

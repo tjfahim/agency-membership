@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Package;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -46,7 +48,10 @@ class HandleInertiaRequests extends Middleware
             'store'=> fn()=> $request->session()->get('store'),
             'update'=> fn()=> $request->session()->get('update'),
             'delete'=> fn()=> $request->session()->get('delete'),
+             'software_empty' => fn () => $request->session()->get('software_empty'),
         ],
+        'users' => fn()=>User::all(),
+        'packages'=>fn()=>Package::all(),
         ]);
     }
 }

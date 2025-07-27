@@ -1,7 +1,7 @@
 <template>
     <div>
         <MainLayout>
-            <form class="max-w-md mx-auto p-6 bg-white rounded-2xl shadow space-y-4 mt-10"
+            <form class="w-1/2 mx-auto p-6 bg-white rounded-2xl shadow space-y-4 mt-10"
                 @submit.prevent="updatePackage">
                 <h1 class="text-center my-5">Edit Package</h1>
                 <div>
@@ -117,6 +117,7 @@ const form = useForm({
     duration: props.ourPackage.duration || '',
     description: props.ourPackage.description || '',
     price: props.ourPackage.price || '',
+    is_free: props.ourPackage.is_free || true,
     selectedSoftwares: props.selectedSoftwares || [],
 })
 

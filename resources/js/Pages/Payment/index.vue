@@ -3,12 +3,19 @@
         <div v-if="showMessage" class="alert alert-success">
             {{ flash?.success }}
         </div>
-         <div v-if="showError" class="alert alert-danger">
-            {{ flash?.error }}
+        <div v-if="showError" class="alert alert-danger">
+            {{ flash?.software_empty }}
         </div>
-        <div class="p-6">
-            <h1 class="text-2xl font-bold mb-4">Payment List</h1>
+        <div class="p-6 relative">
 
+            <h1 class="text-2xl font-bold">Payment List</h1>
+            <Button @click="createModal"
+                class="block px-4 py-2 ml-5 !text-slate-200 !no-underline rounded bg-blue-600 hover:bg-gray-700 text-lg">
+                Create Payment
+            </Button>
+            <!--Create software pop up-->
+            <CreatePayment :popUpModalCreate="popUpModalCreate" @close="popUpModalCreate = false">
+            </CreatePayment>
             <table class="w-full table-auto border-collapse border border-gray-300">
                 <thead class="bg-gray-100">
                     <tr>
@@ -29,9 +36,10 @@
                             {{ payment.payment_method }}
                         </td>
                         <td class="border px-4 py-2">
-                            {{ payment.payment_status }} 
+                            {{ payment.payment_status }}
                         </td>
-                        <td class="flex justify-center items-center border md:px-4 md:py-2 text-center space-x-2 md:space-x-2 xl:space-x-4">
+                        <td
+                            class="flex justify-center items-center border md:px-4 md:py-2 text-center space-x-2 md:space-x-2 xl:space-x-4">
                             <Link :href="`/payment/${payment.id}`" class="text-blue-600 hover:underline"><i
                                 class="las la-eye md:text-md lg:text-lg xl:text-2xl  text-green-500"></i></Link>
                             <Link :href="`/payment/${payment.id}/edit`" class="text-yellow-600 hover:underline"><i
@@ -43,7 +51,7 @@
                     </tr>
                 </tbody>
             </table>
-            <Pagination v-if="payments.data.length>0" :pagination="pagination" @change-page="changePage"></Pagination>
+            <Pagination v-if="payments?.data.length > 0" :pagination="pagination" @change-page="changePage"></Pagination>
         </div>
     </MainLayout>
 </template>
@@ -53,16 +61,21 @@ import { Link, router } from '@inertiajs/vue3'
 import MainLayout from '@/components/layouts/MainLayout.vue'
 import Pagination from '../../components/Pagination.vue'
 import { defineProps, ref, computed, onMounted, watch } from 'vue'
-
+import CreatePayment from '../../components/Payment/create.vue'
 const props = defineProps({
     payments: Array,
     flash: Object,
-    pagination:Object,
+    pagination: Object,
 })
 
 const is_delete = ref(false);
 const deletedId = ref(null);
 const showMessage = ref(false);
+
+const popUpModalCreate = ref(false);
+const createModal = () => {
+    popUpModalCreate.value = !popUpModalCreate.value;
+};
 
 function deletePayment(id) {
     if (confirm('Are you sure you want to delete this payment?')) {
@@ -89,9 +102,7 @@ onMounted(() => {
     if (props.flash?.success) {
         showFlash();
     }
-    if(props.flash?.error){
-        showFlashError();
-    }
+   console.log("Flash props:", props.flash);
     console.log(props.payments);
 });
 
@@ -102,19 +113,23 @@ const showFlash = () => {
     }, 3000);
 }
 
-const showFlashError = ()=>{
-    showError.value = true;
-    setTimeout(()=>{
-        showError.value = false;
-    },3000);
-}
+watch(() => props.flash?.software_empty, (newVal) => {
+    if (newVal) {
+        console.log(newVal);
+        showError.value = true;
+        setTimeout(() => {
+            showError.value = false;
+        }, 3000);
+    }
+});
+
 watch(() => props.flash?.success, (newVal) => {
     if (newVal) {
         showFlash();
     }
 });
-const changePage = (page)=>{
-    router.get(route('payment.index',{page},{preserveState:true}));
+const changePage = (page) => {
+    router.get(route('payment.index', { page }, { preserveState: true }));
 }
 
 </script>

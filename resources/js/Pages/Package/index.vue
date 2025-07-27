@@ -4,14 +4,19 @@
             {{ flash?.success }}
         </div>
         <div class="p-6">
-            <h1 class="text-2xl font-bold mb-4">Package List</h1>
+            <ViewPackage :companyPackage="companyPackage" :companySoftwares="companySoftwares"  :popUpModalView="popUpModalView"
+                @close="popUpModalView=false"></ViewPackage>
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-2xl font-bold">Package List</h1>
+                <Link href="package/create"
+                    class="block px-4 py-2 ml-5 !text-slate-200 !no-underline rounded bg-blue-600 hover:bg-gray-700 text-lg">
+                Create Package
+                </Link>
+            </div>
             <div v-if="packages.length === 0" class="text-gray-500">
                 No packages found.
             </div>
-            <table
-                class="w-full table-auto border-collapse border border-gray-300"
-                v-else
-            >
+            <table class="w-full table-auto border-collapse border border-gray-300" v-else>
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="border px-4 py-2 text-left">Name</th>
@@ -24,11 +29,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr
-                        v-for="(myPackage,index) in filteredPackage"
-                        :key="index"
-                        class="hover:bg-gray-50"
-                    >
+                    <tr v-for="(myPackage, index) in filteredPackage" :key="index" class="hover:bg-gray-50">
                         <td class="border px-4 py-2">{{ myPackage.name }}</td>
                         <td class="border px-4 py-2">
                             {{ myPackage.duration_type }}
@@ -40,45 +41,30 @@
                             {{ myPackage.price }} tk
                         </td>
                         <td
-                            class="flex justify-center items-center border md:px-4 md:py-2 text-center space-x-2 md:space-x-2 xl:space-x-4"
-                        >
-                            <Link
-                                :href="`/package/${myPackage.id}`"
-                                class="text-blue-600 hover:underline"
-                                ><i
-                                    class="las la-eye md:text-md lg:text-lg xl:text-2xl text-green-500"
-                                ></i
-                            ></Link>
-                            <Link
-                                :href="`/package/${myPackage.id}/edit`"
-                                class="text-yellow-600 hover:underline"
-                                ><i
-                                    class="las la-edit md:text-md lg:text-lg xl:text-2xl"
-                                ></i
-                            ></Link>
-                            <button
-                                @click="deletePackage(myPackage.id)"
-                                class="text-red-600 hover:underline"
-                            >
-                                <i
-                                    class="las la-trash md:text-md lg:text-lg xl:text-2xl"
-                                ></i>
+                            class="flex justify-center items-center border md:px-4 md:py-2 text-center space-x-2 md:space-x-2 xl:space-x-4">
+                            <button @click="showPackage(myPackage)" class="text-blue-600 hover:underline "><i
+                                    class="las la-eye md:text-md lg:text-lg xl:text-2xl text-green-500 mr-3"></i></button>
+                            <Link :href="`/package/${myPackage.id}/edit`" class="text-yellow-600 hover:underline"><i
+                                class="las la-edit md:text-md lg:text-lg xl:text-2xl"></i></Link>
+                            <button @click="deletePackage(myPackage.id)" class="text-red-600 hover:underline">
+                                <i class="las la-trash md:text-md lg:text-lg xl:text-2xl"></i>
                             </button>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <Pagination v-if="packages.data.length>0"  :pagination="pagination" @change-page="changePage"></Pagination>
+            <Pagination v-if="packages.data.length > 0" :pagination="pagination" @change-page="changePage"></Pagination>
         </div>
     </MainLayout>
 </template>
 
 <script setup>
 import { Link, router } from "@inertiajs/vue3";
+import axios from "axios";
 import MainLayout from "@/components/layouts/MainLayout.vue";
 import Pagination from "../../components/Pagination.vue";
 import { defineProps, ref, computed, onMounted, watch } from "vue";
-
+import ViewPackage from "../../components/Package/view.vue";
 const props = defineProps({
     packages: Array,
     flash: Object,
@@ -100,7 +86,20 @@ function deletePackage(id) {
         });
     }
 }
-
+const companyPackage = ref({});
+const companySoftwares = ref([]);
+const popUpModalView= ref(false);
+const showPackage = async (myPackage) => {
+    try {
+        const response = await axios.get('/package/' + myPackage.id);
+        console.log(response);
+        companyPackage.value = response.data.ourPackage;
+        companySoftwares.value = response.data.softwares;
+        popUpModalView.value = true;
+    }catch(err){
+        console.log("Failed to fetch response",err);
+    }
+}
 const filteredPackage = computed(() => {
     if (is_delete.value === true && deletedId.value !== null) {
         return props.packages.data.filter(
@@ -132,7 +131,7 @@ watch(
         }
     }
 );
-const changePage = (page)=>{
-    router.get(route('package.index',{page},{preserveState:true}));
+const changePage = (page) => {
+    router.get(route('package.index', { page }, { preserveState: true }));
 }
 </script>

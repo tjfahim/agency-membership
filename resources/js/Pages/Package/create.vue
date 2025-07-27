@@ -1,7 +1,7 @@
 <template>
     <div>
         <MainLayout>
-            <form class="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow space-y-4 mt-10"
+            <form class="w-1/2 mx-auto p-6 bg-white rounded-2xl shadow space-y-4 mt-10"
                 @submit.prevent="submitPackage">
                 <h1 class="text-center my-5">Create Package</h1>
                 <div>

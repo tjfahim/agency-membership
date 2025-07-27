@@ -91,10 +91,11 @@ function deletePayment(id) {
 }
 
 const filteredPayment = computed(() => {
-    if (is_delete.value === true && deletedId.value !== null) {
-        return props.payments.data.filter((payment) => payment.id != deletedId.value);
-    }
-    return props.payments.data;
+  if (!props.payments?.data) return []; 
+  if (is_delete.value && deletedId.value !== null) {
+    return props.payments.data.filter((payment) => payment.id != deletedId.value);
+  }
+  return props.payments.data;
 });
 const showError = ref(false);
 

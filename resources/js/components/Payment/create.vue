@@ -93,14 +93,17 @@ const props = defineProps({
     flash: {
         type: Object,
     },
-    popUpModalCreate: Boolean,
+    popUpModalCreate: {
+        type:Boolean,
+        default: false,
+    },
 });
 const packages = page.props.packages;
 const rawPackages = ref([]);
 
 const emit = defineEmits(['close'])
 
-onMounted(async() => {
+onMounted(async () => {
     if (props.flash?.error) {
         showFlash();
     }
@@ -134,6 +137,12 @@ let errors = ref({});
 const submitPayment = () => {
     form.post('/payment', {
         onSuccess: () => {
+            if (props.flash?.software_empty) {
+                // keep modal open and show the flash error
+                 emit('close');
+                console.warn('Software empty error returned from server');
+                return;
+            }
             form.reset();
             console.log('success');
             emit('close');
@@ -148,19 +157,19 @@ const submitPayment = () => {
 const processing = form.processing;
 
 watch(() => form.package_id, (newPkgId) => {
-  console.log("Selected package ID:", newPkgId);
-  
-  const selectedPackage = rawPackages.value.find(pkg => pkg.id == newPkgId); 
+    console.log("Selected package ID:", newPkgId);
 
-  if (!selectedPackage) {
-    console.warn('Package not found for ID:', newPkgId);
-    
-  }
+    const selectedPackage = rawPackages.value.find(pkg => pkg.id == newPkgId);
 
-  form.amount = selectedPackage.is_free == 1 ? 0 : selectedPackage.price;
-  form.duration = selectedPackage.duration;
-  form.duration_type = selectedPackage.duration_type;
+    if (!selectedPackage) {
+        console.warn('Package not found for ID:', newPkgId);
 
-  console.log('Updated form:', form);
+    }
+
+    form.amount = selectedPackage.is_free == 1 ? 0 : selectedPackage.price;
+    form.duration = selectedPackage.duration;
+    form.duration_type = selectedPackage.duration_type;
+
+    console.log('Updated form:', form);
 });
 </script>

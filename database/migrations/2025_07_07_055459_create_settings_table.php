@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('renew_time');
+            $table->string('master_password')->nullable();
             $table->timestamps();
         });
     }

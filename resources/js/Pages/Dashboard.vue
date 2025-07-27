@@ -1,22 +1,25 @@
 <template>
-    <div>
-        <MainLayout>
-            <DashboardComponent :users="users" :pagination="pagination"></DashboardComponent>
-        </MainLayout>
-    </div>
+  <div>
+    <MainLayout>
+      <DashboardComponent 
+        :summary="summary" 
+        :recentPayments="recentPayments"
+        :users="users"
+        :pagination="pagination"
+      />
+    </MainLayout>
+  </div>
 </template>
+
 <script setup lang="ts">
 import MainLayout from '../components/layouts/MainLayout.vue';
 import DashboardComponent from '../components/Dashboard/DashboardComponent.vue';
-import { defineProps, onMounted } from 'vue'
-import Pagination from '../components/Pagination.vue';
+import { defineProps } from 'vue';
 
 const props = defineProps({
-    users: Object,
-    pagination: Object,
-});
-
-onMounted(() => {
-    console.log(props.users);
+  summary: Object,
+  recentPayments: Array,
+  users: Object,
+  pagination: Object
 });
 </script>

@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\UserAuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
@@ -18,6 +20,10 @@ use Inertia\Inertia;
 Route::middleware('auth')->group(function(){
     //dashboard
     Route::get('/', [DashboardController::class,'index'])->name('dashboard');
+    
+    //report
+    Route::get('/report', [ReportController::class,'index'])->name('dashboard');
+
 
     //logout
     Route::post('/logout',[UserAuthController::class,'destroy'])->name('logout');
@@ -57,6 +63,10 @@ Route::middleware('auth')->group(function(){
     Route::resource('/payment',PaymentController::class);
     Route::get('/subscription/payment/{subscription}',[PaymentController::class,'paySubscription'])->name('pay.subscription');
 
+
+    //Settings
+    Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
+    Route::put('/setting', [SettingController::class, 'update'])->name('setting.update');
 });
 
 

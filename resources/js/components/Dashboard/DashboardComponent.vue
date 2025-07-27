@@ -1,169 +1,186 @@
 <template>
-    <div class="overflow-x-auto p-4">
-        <h2 class="text-xl font-semibold mb-4 bg-indigo-200 w-1/5 text-center py-5 px-5 rounded-lg !text-slate-600">
-            Dashboard</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Username -->
-            <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Username</label>
-                <input v-model="filters.username" placeholder="Enter username"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-
-            <!-- Software -->
-            <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Software</label>
-                <input v-model="filters.software" placeholder="Enter software"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-
-            <!-- Package -->
-            <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Package</label>
-                <input v-model="filters.package" placeholder="Enter package"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-
-            <!-- Last Payment Date -->
-            <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Last Payment Date</label>
-                <input type="date" v-model="filters.last_payment_date"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-
-            <!-- Expire Date -->
-            <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Expire Date</label>
-                <input type="date" v-model="filters.expire_date"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-
-            <!-- Auto Renew -->
-            <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Auto Renew</label>
-                <select v-model="filters.auto_renew"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                </select>
-            </div>
-
-            <!-- Status -->
-            <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Status</label>
-                <select v-model="filters.status"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Select</option>
-                    <option value="Paid">Paid</option>
-                    <option value="Due">Due</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Unpaid">Unpaid</option>
-                </select>
-            </div>
-
-            <!-- Price -->
-            <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Price</label>
-                <input v-model="filters.price" type="number" placeholder="Enter price"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <!-- Submit Button -->
-            <div class="mt-1 flex justify-end">
-                <button @click="applyFilters"
-                    class="bg-blue-600 text-white font-semibold px-6 py-3 btnRadius mb-5 shadow hover:shadow-md transition duration-200">
-                    🔍 Apply Filters
-                </button>
-            </div>
+  <div class="p-4">
+   
+    <!-- Summary Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Total Users Card -->
+      <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Total Users</p>
+            <p class="text-2xl font-bold text-gray-800 mt-2">{{ summary.total_users }}</p>
+          </div>
+          <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+            <i class="fas fa-users text-xl"></i>
+          </div>
         </div>
+      </div>
 
+      <!-- Total Payments Card -->
+      <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Total Payments</p>
+            <p class="text-2xl font-bold text-gray-800 mt-2">{{ summary.total_payments }} tk</p>
+          </div>
+          <div class="p-3 rounded-full bg-green-100 text-green-600">
+            <i class="fas fa-money-bill-wave text-xl"></i>
+          </div>
+        </div>
+      </div>
 
-        <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden text-sm md:text-base">
-            <thead class="bg-gray-100">
-                <tr class="text-left">
-                    <th class="px-4 py-2">Username</th>
-                    <th class="px-4 py-2">Software</th>
-                    <th class="px-4 py-2">Package</th>
-                    <th class="px-4 py-2">Payment Date</th>
-                    <th class="px-4 py-2">Expire Date</th>
-                    <th class="px-4 py-2">Auto Renew</th>
-                    <th class="px-4 py-2">Status</th>
-                    <th class="px-4 py-2">Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(item, index) in filteredUsers" :key="index" class="hover:bg-gray-50 border-b">
-                    <td class="px-4 py-2 whitespace-nowrap">{{ item?.subscription?.user?.name }}</td>
-                    <td class="px-4 py-2">
-                        <span v-if="item.subscription?.package?.softwares.length > 0" v-for="software in
-                            item.subscription?.package?.softwares
-                            " :key="software?.name">
-                            {{ software?.name }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-2">{{ item.subscription?.package?.name }}</td>
-                    <td class="px-4 py-2">{{ item.created_at_format }}</td>
-                    <td class="px-4 py-2">{{ item?.subscription?.end_at }}</td>
-                    <td class="px-4 py-2">
-                        <span :class="item?.subscription?.auto_renew ? 'text-green-600' : 'text-red-500'">
-                            {{ item.auto_renew ? 'Yes' : 'No' }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-2">
-                        <span
-                            :class="item?.subscription?.payment_status === 'Paid' ? 'text-green-600' : 'text-red-500'">
-                            {{ item?.subscription?.payment_status }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-2">{{ item?.amount }} tk</td>
-                </tr>
-            </tbody>
-        </table>
+      <!-- Due Payments Card -->
+      <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Due Payments</p>
+            <p class="text-2xl font-bold text-gray-800 mt-2">{{ summary.due_payments }} tk</p>
+          </div>
+          <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+            <i class="fas fa-exclamation-circle text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Payments Card -->
+      <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Pending Payments</p>
+            <p class="text-2xl font-bold text-gray-800 mt-2">{{ summary.pending_payments }} tk</p>
+          </div>
+          <div class="p-3 rounded-full bg-orange-100 text-orange-600">
+            <i class="fas fa-clock text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Software Card -->
+      <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Total Software</p>
+            <p class="text-2xl font-bold text-gray-800 mt-2">{{ summary.total_softwares }}</p>
+          </div>
+          <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+            <i class="fas fa-code text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Packages Card -->
+      <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Total Packages</p>
+            <p class="text-2xl font-bold text-gray-800 mt-2">{{ summary.total_packages }}</p>
+          </div>
+          <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
+            <i class="fas fa-box-open text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Subscriptions Card -->
+      <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Active Subscriptions</p>
+            <p class="text-2xl font-bold text-gray-800 mt-2">{{ summary.active_subscriptions }}</p>
+          </div>
+          <div class="p-3 rounded-full bg-teal-100 text-teal-600">
+            <i class="fas fa-sync-alt text-xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expired Subscriptions Card -->
+      <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Expired Subscriptions</p>
+            <p class="text-2xl font-bold text-gray-800 mt-2">{{ summary.expired_subscriptions }}</p>
+          </div>
+          <div class="p-3 rounded-full bg-red-100 text-red-600">
+            <i class="fas fa-calendar-times text-xl"></i>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Recent Activity Section -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <h3 class="text-lg font-semibold mb-4 text-gray-800">Recent Payments</h3>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white">
+          <thead class="bg-gray-100">
+            <tr class="text-left">
+              <th class="px-4 py-2">Username</th>
+              <th class="px-4 py-2">Package</th>
+              <th class="px-4 py-2">Payment Date</th>
+              <th class="px-4 py-2">Amount</th>
+              <th class="px-4 py-2">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(payment, index) in recentPayments" :key="index" class="hover:bg-gray-50 border-b">
+              <td class="px-4 py-2">{{ payment.subscription?.user?.name }}</td>
+              <td class="px-4 py-2">{{ payment.subscription?.package?.name }}</td>
+              <td class="px-4 py-2">{{ payment.created_at_format }}</td>
+              <td class="px-4 py-2">{{ payment.amount }} tk</td>
+              <td class="px-4 py-2">
+                <span :class="{
+                  'text-green-600': payment.subscription?.payment_status === 'Paid',
+                  'text-red-500': payment.subscription?.payment_status === 'Due',
+                  'text-yellow-500': payment.subscription?.payment_status === 'Pending'
+                }">
+                  {{ payment.subscription?.payment_status }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script setup>
-import { onMounted, computed, ref } from "vue";
-import { useForm, router } from "@inertiajs/vue3";
-
+<script setup lang="ts">
+import { defineProps } from 'vue';
 
 const props = defineProps({
-    users: Object,
-    pagination: Object,
+  summary: {
+    type: Object,
+    required: true,
+    default: () => ({
+      total_users: 0,
+      total_payments: 0,
+      due_payments: 0,
+      pending_payments: 0,
+      total_softwares: 0,
+      total_packages: 0,
+      active_subscriptions: 0,
+      expired_subscriptions: 0
+    })
+  },
+  recentPayments: {
+    type: Array,
+    required: true,
+    default: () => []
+  },
+  users: {
+    type: Object,
+    required: false
+  },
+  pagination: {
+    type: Object,
+    required: false
+  }
 });
-const filters = useForm({
-    username: '',
-    software: '',
-    package: '',
-    last_payment_date: '',
-    expire_date: '',
-    auto_renew: '',
-    status: '',
-    price: '',
-});
-const is_delete = ref(false);
-onMounted(() => {
-    console.log(props.users, props.pagination);
-});
-
-const filteredUsers = computed(() => {
-    if (is_delete.value === true && deletedId.value !== null) {
-        return props.users.data.filter(
-            (myPackage) => myPackage.id != deletedId.value
-        );
-    }
-    return props.users.data;
-});
-
-const applyFilters = () => {
-    router.get(route('dashboard'),filters,{
-        replace:true,
-        preserveState:true,
-    });
-}
 </script>
+
 <style>
 .btnRadius {
-    border-radius: 10px;
+  border-radius: 10px;
 }
 </style>

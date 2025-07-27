@@ -26,16 +26,19 @@ defineOptions({
     <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
         <div class="sb-sidenav-menu">
             <div class="nav">
-                <div class="ml-6 my-2">
-                    <Link
-                        :href="`/`"
-                        :class="[
-                            'flex gap-2 !text-gray-400 !no-underline hover:!no-underline hover:!text-gray-200',
-                            currentPath === '/' ? '!text-white font-semibold' : ''
-                        ]"
-                    >
-                        Dashboard
-                    </Link>
+                <div class=" my-2">
+                       <Link
+                    :href="`/`"
+                    :class="[
+                        'flex items-center justify-between cursor-pointer px-4 py-2 my-2 !text-slate-300 !no-underline',
+                        currentPath==='/' ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
+                    ]"
+                >
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-tachometer"></i><span> Dashboard</span>
+                    </div>
+                </Link>
+                   
                 </div>
 
                 <!-- Software -->
@@ -47,8 +50,7 @@ defineOptions({
                     ]"
                 >
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-columns"></i>
-                        <span>Software Manage</span>
+                        <i class="fa fa-code"></i><span> Software Manage</span>
                     </div>
                 </Link>
 
@@ -61,8 +63,7 @@ defineOptions({
                     ]"
                 >
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-columns"></i>
-                        <span>Package Manage</span>
+                       <i class="fa fa-box-open"></i> <span>Package Manage</span>
                     </div>
                 </Link>
 
@@ -75,8 +76,7 @@ defineOptions({
                     ]"
                 >
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-columns"></i>
-                        <span>Subscription Manage</span>
+                       <i class="fa fa-sync-alt"></i> <span>Subscription Manage</span>
                     </div>
                 </Link>
 
@@ -89,8 +89,7 @@ defineOptions({
                     ]"
                 >
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-columns"></i>
-                        <span>Payment Manage</span>
+                        <i class="fa fa-credit-card"></i><span>Payment Manage</span>
                     </div>
                 </Link>
 
@@ -103,8 +102,7 @@ defineOptions({
                     ]"
                 >
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-columns"></i>
-                        <span>User Manage</span>
+                        <i class="fa fa-users"></i><span>User Manage</span>
                     </div>
                 </Link>
             </div>

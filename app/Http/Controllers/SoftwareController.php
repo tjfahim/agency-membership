@@ -15,7 +15,7 @@ class SoftwareController extends Controller
     public function index()
     {
         //
-        $softwares = Software::paginate(20);
+        $softwares = Software::latest()->paginate(20);
         $pagination = [
             'total' => $softwares->total(),
             'per_page' => $softwares->perPage(),

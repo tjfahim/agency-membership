@@ -44,6 +44,10 @@ Route::middleware('auth')->group(function(){
         return response()->json($package);
     })->name('fetch.package');
 
+    Route::get('/get_packages',function(){
+        $packages = Package::all();
+        return response()->json($packages);
+    });
 
 
     //Menus
@@ -52,6 +56,7 @@ Route::middleware('auth')->group(function(){
     Route::resource('/subscription',SubscriptionController::class);
     Route::resource('/payment',PaymentController::class);
     Route::get('/subscription/payment/{subscription}',[PaymentController::class,'paySubscription'])->name('pay.subscription');
+
 });
 
 

@@ -22,7 +22,7 @@
                     <select id="package" v-model="form.package_id"
                         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option disabled value="">Select Package</option>
-                        <option v-for="(ourPackage, index) in packages" :key="index" :value="ourPackage.id">{{
+                        <option v-for="(ourPackage, index) in packages" :key="index" :value="ourPackage.id" @click="alert(1)">{{
                             ourPackage.name }}</option>
                     </select>
                     <p v-if="errors.package_id" class="text-red-600 text-sm mt-1">

@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\UserAuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SoftwareController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
@@ -57,6 +58,10 @@ Route::middleware('auth')->group(function(){
     Route::resource('/payment',PaymentController::class);
     Route::get('/subscription/payment/{subscription}',[PaymentController::class,'paySubscription'])->name('pay.subscription');
 
+
+    //Settings
+    Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
+    Route::put('/setting', [SettingController::class, 'update'])->name('setting.update');
 });
 
 

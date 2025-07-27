@@ -40,19 +40,19 @@ defineOptions({
                 </Link>
                    
                 </div>
-
-                <!-- Software -->
+                <!-- Users -->
                 <Link
-                    :href="`/software`"
+                    :href="`/users`"
                     :class="[
                         'flex items-center justify-between cursor-pointer px-4 py-2 my-2 !text-slate-300 !no-underline',
-                        currentPath.startsWith('/software') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
+                        currentPath.startsWith('/users') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
                     ]"
                 >
                     <div class="flex items-center gap-2">
-                        <i class="fa fa-code"></i><span> Software Manage</span>
+                        <i class="fa fa-users"></i><span>User Manage</span>
                     </div>
                 </Link>
+             
 
                 <!-- Package -->
                 <Link
@@ -67,18 +67,7 @@ defineOptions({
                     </div>
                 </Link>
 
-                <!-- Subscription -->
-                <Link
-                    :href="`/subscription`"
-                    :class="[
-                        'flex items-center justify-between cursor-pointer px-4 py-2 my-2 !text-slate-300 !no-underline',
-                        currentPath.startsWith('/subscription') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
-                    ]"
-                >
-                    <div class="flex items-center gap-2">
-                       <i class="fa fa-sync-alt"></i> <span>Subscription Manage</span>
-                    </div>
-                </Link>
+             
 
                 <!-- Payment -->
                 <Link
@@ -92,19 +81,43 @@ defineOptions({
                         <i class="fa fa-credit-card"></i><span>Payment Manage</span>
                     </div>
                 </Link>
-
-                <!-- Users -->
+                   <!-- Subscription -->
                 <Link
-                    :href="`/users`"
+                    :href="`/subscription`"
                     :class="[
                         'flex items-center justify-between cursor-pointer px-4 py-2 my-2 !text-slate-300 !no-underline',
-                        currentPath.startsWith('/users') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
+                        currentPath.startsWith('/subscription') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
                     ]"
                 >
                     <div class="flex items-center gap-2">
-                        <i class="fa fa-users"></i><span>User Manage</span>
+                       <i class="fa fa-sync-alt"></i> <span>Subscription Manage</span>
                     </div>
                 </Link>
+                <!-- Software -->
+                <Link
+                    :href="`/software`"
+                    :class="[
+                        'flex items-center justify-between cursor-pointer px-4 py-2 my-2 !text-slate-300 !no-underline',
+                        currentPath.startsWith('/software') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
+                    ]"
+                >
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-code"></i><span> Software Manage</span>
+                    </div>
+                </Link>
+                <!-- Report -->
+                <Link
+                    :href="`/report`"
+                    :class="[
+                        'flex items-center justify-between cursor-pointer px-4 py-2 my-2 !text-slate-300 !no-underline',
+                        currentPath.startsWith('/report') ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
+                    ]"
+                >
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-file"></i><span>Report Manage</span>
+                    </div>
+                </Link>
+
             </div>
         </div>
 

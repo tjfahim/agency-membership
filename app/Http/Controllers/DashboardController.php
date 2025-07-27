@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Package;
 use App\Models\Payment;
+use App\Models\Software;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -13,62 +16,50 @@ class DashboardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        //
-        
-        $query = Payment::with(['subscription.package.softwares','subscription.user']);
-       
+public function index(Request $request)
+{
+    $summary = [
+        'total_users' => User::count(),
+        'total_payments' => Payment::sum('amount'),
+        'due_payments' => Payment::whereHas('subscription', function($q) {
+            $q->where('payment_status', 'Due');
+        })->sum('amount'),
+        'pending_payments' => Payment::whereHas('subscription', function($q) {
+            $q->where('payment_status', 'Pending');
+        })->sum('amount'),
+        'total_softwares' => Software::count(),
+        'total_packages' => Package::count(),
+        'active_subscriptions' => Subscription::where('is_active', 1)->count(),
+        'expired_subscriptions' => Subscription::where('end_at', '<', now())->count(),
+    ];
 
-        if($request->filled('username')){
-            $query->whereHas('subscription.user',function($q) use ($request){
-                $q->where('name','LIKE','%'.$request->input('username').'%');
-            });
-        }  
-        if($request->filled('software')){
-            $query->whereHas('subscription.package.softwares',function($q) use($request){
-                $q->where('name','LIKE','%'. $request->input('software').'%');
-            });
-        }
-        if($request->filled('package')){
-            $query->whereHas('subscription.package',function($q)use($request){
-                $q->where('name','LIKE','%'.$request->input('package').'%');
-            });
-        }
-        if($request->filled('last_payment_date')){
-            $query->whereDate('created_at',$request->input('last_payment_date'));
-        }
-        if($request->filled('expire_date')){
-            $query->whereHas('subscription',function($q) use ($request){
-                $q->whereDate('end_at',$request->input('expire_date'));
-            });
-        }
-        if($request->filled('auto_renew')){
-            $query->whereHas('subscription',function($q) use ($request){
-                $q->where('auto_renew',$request->input('auto_renew'));
-            });
-        }
-        if($request->filled('status')){
-            $query->whereHas('subscription',function($q) use ($request){
-                $q->where('payment_status',$request->input('status'));
-            });
-        }
-        if($request->filled('price')){
-            $query->where('amount',$request->input('price'));
-        }
-        $users = $query->paginate(20)->appends($request->all());
-        $pagination = [
-        'total' => $users->total(),
-        'per_page' => $users->perPage(),
-        'current_page' => $users->currentPage(),
-        'last_page' => $users->lastPage(),
-        'from' => $users->firstItem(),
-        'to' => $users->lastItem(),
-    ]; 
-        return Inertia::render('Dashboard', ['users' => $users, 'pagination' => $pagination]);
+    $recentPayments = Payment::with(['subscription.user', 'subscription.package'])
+        ->orderBy('created_at', 'desc')
+        ->limit(5)
+        ->get()
+        ->map(function($payment) {
+            return [
+                'id' => $payment->id,
+                'amount' => $payment->amount,
+                'created_at_format' => $payment->created_at->format('Y-m-d'),
+                'subscription' => [
+                    'user' => $payment->subscription->user,
+                    'package' => $payment->subscription->package,
+                    'payment_status' => $payment->subscription->payment_status
+                ]
+            ];
+        });
 
-    }
+    // Get users data if needed for other parts of the dashboard
+    $users = []; // Add your users query here if needed
 
+    return Inertia::render('Dashboard', [
+        'summary' => $summary,
+        'recentPayments' => $recentPayments,
+        'users' => $users,
+        'pagination' => [] // Add pagination data if needed
+    ]);
+}
     /**
      * Show the form for creating a new resource.
      */

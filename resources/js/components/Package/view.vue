@@ -36,10 +36,6 @@
                     <span class="text-slate-800 text-lg font-bold ml-1"> {{ companyPackage.duration_type }}</span>
                 </div>
                 <div>
-                    <label  class="block text-lg font-medium text-gray-600 mb-1">Duration:</label>
-                    <span class="text-slate-800 text-lg font-bold ml-1"> {{convertDuration(companyPackage.duration,companyPackage.duration_type)}}</span>
-                </div>
-                <div>
                  <label  class="block text-lg font-medium text-gray-600 mb-1">Price:</label>
                     <span class="text-slate-800 text-lg font-bold ml-1"> {{ companyPackage.price }}</span>
                 </div>

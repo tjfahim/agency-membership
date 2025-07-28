@@ -25,7 +25,7 @@ class SubscriptionRequest extends FormRequest
             //
             'user_id'=>['required','exists:users,id'],
             'package_id'=>['required','exists:packages,id'],
-            'payment_status' => ['required','in:Pending,Unpaid'],
+            'payment_status' => ['required','in:Paid,Unpaid,Due,Pending'],
         ];
     }
 

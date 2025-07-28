@@ -22,7 +22,9 @@ class PaymentController extends Controller
     public function index()
     {
         //
-        $payments = Payment::select(['id', 'user_id', 'amount', 'payment_method', 'payment_status'])->with(['user:id,name'])->paginate(15);
+        $payments = Payment::select(['id', 'user_id', 'amount', 'payment_method', 'payment_status', 'subscription_id'])
+            ->with(['user:id,name', 'subscription:id,package_id,user_id', 'subscription.package:id,name,is_free'])->latest()
+            ->paginate(15);
         $pagination = [
             'total' => $payments->total(),
             'per_page' => $payments->perPage(),
@@ -76,10 +78,8 @@ class PaymentController extends Controller
             ]);
             $softwares = $subscription->load(['package.softwares']);
             if (!$subscription->package || $subscription->package->softwares->isEmpty()) {
-                 return  redirect()->route('payment.index')->with([
-                    'flash' => [
-                        'software_empty' => 'No software is included in this package. Please select softwares!',
-                    ],
+                return redirect()->route('payment.index')->with([
+                    'error' => 'No software is included in this package. Please select softwares!',
                 ]);
             }
             Log::info('subscription: ' . $subscription);
@@ -90,6 +90,7 @@ class PaymentController extends Controller
                 'payment_method' => $validated['payment_method'],
                 'payment_status' => $validated['payment_status'],
                 'subscription_id' => $subscription->id,
+                'auto_renew' => $request['auto_renew'] ?? false,
             ]);
             Log::info('payment created');
             DB::commit();
@@ -115,7 +116,9 @@ class PaymentController extends Controller
     {
         //
         $payment = $payment->load(['user', 'subscription.package.softwares']);
-        return Inertia::render('Payment/show', ['payment' => $payment]);
+        $packages = Package::all();
+        $users = User::doesntHave('roles')->select(['id', 'name'])->get();
+        return response()->json(['payment' => $payment, 'packages' => $packages, 'users' => $users]);
     }
 
     /**
@@ -137,6 +140,7 @@ class PaymentController extends Controller
     {
         //
         $validated = $request->validated();
+     
         DB::beginTransaction();
 
         try {
@@ -158,7 +162,7 @@ class PaymentController extends Controller
             ]);
             $softwares = $subscription->load(['package.softwares']);
             if (!$subscription->package || $subscription->package->softwares->isEmpty()) {
-                 return  redirect()->route('payment.index')->with([
+                return  redirect()->route('payment.index')->with([
                     'flash' => [
                         'software_empty' => 'No software is included in this package. Please select softwares!',
                     ],
@@ -172,6 +176,7 @@ class PaymentController extends Controller
                 'payment_method' => $validated['payment_method'],
                 'payment_status' => $validated['payment_status'],
                 'subscription_id' => $subscription->id,
+                'auto_renew' => $request['auto_renew'] ?? false,
             ]);
             Log::info('payment updated');
             DB::commit();

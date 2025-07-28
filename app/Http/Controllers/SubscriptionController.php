@@ -6,6 +6,7 @@ use App\Http\Requests\SubscriptionRequest;
 use App\Models\Package;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class SubscriptionController extends Controller
@@ -16,7 +17,7 @@ class SubscriptionController extends Controller
     public function index()
     {
         //
-        $subscriptions = Subscription::select(['id','start_at','end_at','payment_status','user_id','package_id','assigned_by'])->with(['user:id,name','package:id,name','assignedBy:id,name'])->paginate(20);
+        $subscriptions = Subscription::select(['id', 'start_at', 'end_at', 'payment_status', 'user_id', 'package_id', 'assigned_by'])->with(['user:id,name', 'package:id,name,is_free', 'assignedBy:id,name'])->paginate(20);
         $pagination = [
             'total' => $subscriptions->total(),
             'per_page' => $subscriptions->perPage(),
@@ -25,7 +26,7 @@ class SubscriptionController extends Controller
             'from' => $subscriptions->firstItem(),
             'to' => $subscriptions->lastItem(),
         ];
-        return Inertia::render('Subscription/index',['subscriptions'=>$subscriptions,'pagination'=>$pagination]);
+        return Inertia::render('Subscription/index', ['subscriptions' => $subscriptions, 'pagination' => $pagination]);
     }
 
     /**
@@ -58,7 +59,7 @@ class SubscriptionController extends Controller
         //     'payment_status' => $validated['payment_status'],
         //     'assigned_by' => auth()->id(),
         // ]);
-        
+
         // return to_route('subscription.index')->with(['success'=> "Subsciption created!"]);
     }
 
@@ -68,8 +69,8 @@ class SubscriptionController extends Controller
     public function show(string $id)
     {
         //
-        $subscription = Subscription::select(['user_id','package_id','auto_renew','is_active','start_at','end_at','payment_status'])->with(['user:id,name','package:id,name'])->findOrFail($id);
-        return Inertia::render('Subscription/show',['subscription'=>$subscription]);
+        $subscription = Subscription::select(['user_id', 'package_id', 'auto_renew', 'is_active', 'start_at', 'end_at', 'payment_status'])->with(['user:id,name', 'package:id,name'])->findOrFail($id);
+        return Inertia::render('Subscription/show', ['subscription' => $subscription]);
     }
 
     /**
@@ -78,8 +79,8 @@ class SubscriptionController extends Controller
     public function edit(string $id)
     {
         //
-        $subscription = Subscription::select(['id','user_id','package_id','auto_renew','is_active','start_at','end_at','payment_status'])->with(['user:id,name','package:id,name'])->findOrFail($id);
-         return Inertia::render('Subscription/edit',['subscription'=>$subscription]);
+        $subscription = Subscription::select(['id', 'user_id', 'package_id', 'auto_renew', 'is_active', 'start_at', 'end_at', 'payment_status'])->with(['user:id,name', 'package:id,name'])->findOrFail($id);
+        return Inertia::render('Subscription/edit', ['subscription' => $subscription]);
     }
 
     /**
@@ -88,20 +89,35 @@ class SubscriptionController extends Controller
     public function update(SubscriptionRequest $request, string $id)
     {
         //
-         $validated = $request->validated();
-         $subscription = Subscription::findOrFail($id);
-         $subscription->update([
-            'user_id'=> $validated['user_id'],
-            'package_id' => $validated['package_id'],
-            'is_active' => $request['is_active'] ?? false,
-            'auto_renew' => $request['auto_renew'] ?? false,
-            'payment_status' => $validated['payment_status'],
-            'assigned_by' => auth()->id(),
-        ]);
-        return to_route('subscription.index')->with(['success'=> "Subsciption updated!"]);
+        $validated = $request->validated();
+        $subscription = Subscription::with('payments')->findOrFail($id);
+        DB::beginTransaction();
+        try {
+            $subscription->update([
+                'user_id' => $validated['user_id'],
+                'package_id' => $validated['package_id'],
+                'is_active' => $request['is_active'] ?? false,
+                'auto_renew' => $request['auto_renew'] ?? false,
+                'payment_status' => $validated['payment_status'],
+                'assigned_by' => auth()->id(),
+            ]);
+            $payment = $subscription->payments()->where('subscription_id', $id)->first();
+            if ($payment) {
+                // Update the payment record accordingly
+                $payment->update([
+                    'user_id' => $validated['user_id'],  // update payment user if needed
+                    'payment_status' => $validated['payment_status'], // sync payment status
+                    // Add more fields here if needed, e.g. payment_method, amount etc.
+                ]);
+            }
+            DB::commit();
+          } catch (\Exception $e) {
+            return back()->with('error', 'failed to update:' . $e->getMessage());
+        }
 
+        return to_route('subscription.index')->with(['success' => "Subsciption updated!"]);
     }
-    
+
 
     /**
      * Remove the specified resource from storage.
@@ -109,7 +125,7 @@ class SubscriptionController extends Controller
     public function destroy(string $id)
     {
         //
-        Subscription::where('id',$id)->delete();
-        return to_route('subscription.index')->with(['success'=>'Deleted Successfully!']);
+        Subscription::where('id', $id)->delete();
+        return to_route('subscription.index')->with(['success' => 'Deleted Successfully!']);
     }
 }

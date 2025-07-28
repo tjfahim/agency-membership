@@ -18,7 +18,7 @@
         <h1 class="text-2xl font-bold">Package List</h1>
         <Link
           href="/package/create"
-          class="block px-4 py-2 ml-5 !text-slate-200 !no-underline rounded bg-blue-600 hover:bg-gray-700 text-lg"
+          class="block px-4 py-2 ml-5 !text-slate-200 !no-underline rounded bg-amber-600 hover:bg-amber-700 text-lg"
         >
           Create Package
         </Link>
@@ -187,6 +187,6 @@ const changePage = (page) => {
 }
 
 table.vgt-table td {
-  padding: 0.5em;
+  padding: 0.2em;
 }
 </style>

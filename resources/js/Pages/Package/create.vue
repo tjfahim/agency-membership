@@ -1,9 +1,26 @@
 <template>
     <div>
         <MainLayout>
-            <form class="w-1/2 mx-auto p-6 bg-white rounded-2xl shadow space-y-4 mt-10"
-                @submit.prevent="submitPackage">
-                <h1 class="text-center my-5">Create Package</h1>
+            <form class="w-1/2 mx-auto p-6 bg-white rounded-2xl shadow space-y-4 mt-10" @submit.prevent="submitPackage">
+                <div class="flex justify-between items-center">
+                    <div class="header w-full flex justify-end ">
+                        <h2
+                            class="text-3xl font-bold text-black rounded-lg shadow-md px-2 py-1 text-center mb-6 inline-block pb-2 ">
+                            Create Package
+                        </h2>
+                    </div>
+                    <div class="back w-1/2 flex justify-end">
+                        <Link href="/package" class="!text-blue-600 hover:text-blue-800 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Back
+                        </Link>
+                    </div>
+                </div>
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
                     <input type="text" id="name" name="name" v-model="form.name"
@@ -36,14 +53,6 @@
                     </select>
                     <p v-if="errors.duration_type" class="text-red-600 text-sm mt-1">
                         {{ errors.duration_type }}
-                    </p>
-                </div>
-                <div>
-                    <label for="duration" class="block text-sm font-medium text-gray-700 mb-1">Duration</label>
-                    <input type="number" id="duration" name="duration" v-model="form.duration"
-                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                    <p v-if="errors.duration" class="text-red-600 text-sm mt-1">
-                        {{ errors.duration }}
                     </p>
                 </div>
                 <div>
@@ -87,7 +96,7 @@
 </template>
 <script setup lang="ts">
 import MainLayout from '../../components/layouts/MainLayout.vue';
-import { useForm } from '@inertiajs/vue3'
+import { useForm, Link } from '@inertiajs/vue3'
 import { ref, defineProps } from 'vue';
 
 const props = defineProps({
@@ -101,9 +110,9 @@ const form = useForm({
     name: '',
     price: '',
     duration_type: '',
-    duration: '',
+    duration: 1,
     description: '',
-    is_free: false,
+    is_free: true,
     selectedSoftwares: [],
 })
 let errors = ref({});

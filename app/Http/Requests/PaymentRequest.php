@@ -26,7 +26,7 @@ class PaymentRequest extends FormRequest
             'user_id' => ['required','exists:users,id'],
             'package_id'=>['required','exists:packages,id'],
             'amount' => ['required','numeric'],
-            'payment_method' => ['required','in:Cash,Bank,Card'],
+            'payment_method' => ['required','in:Cash,Bank,Card,Free'],
             'payment_status' => ['required','in:Paid,Unpaid,Due,Pending'],
         ];
     }

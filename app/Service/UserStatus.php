@@ -29,6 +29,7 @@ class UserStatus
             \Log::info("Status Changed",["user status is activated. email: "=>$this->user->email,"response: "=>$response->json()]);
            }catch(\Exception $e){
             \Log::error("Failed to change status for {$this->user->name} : ",$e->getMessage());
+            return to_route('payment.index')->with(['error' => 'Something went wrong!' . $e->getMessage()]);
            }
         }
         \Log::info("User :" . $this->user);

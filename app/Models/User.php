@@ -79,4 +79,8 @@ class User extends Authenticatable
     {
         return $this->created_at?->diffForHumans();
     }
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
 }

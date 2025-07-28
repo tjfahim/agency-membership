@@ -71,7 +71,7 @@
             <div class="mt-1 flex justify-end">
                 <button @click="applyFilters"
                     class="bg-blue-600 text-white font-semibold px-6 py-3 btnRadius mb-5 shadow hover:shadow-md transition duration-200">
-                    🔍 Apply Filters
+                     Apply Filters
                 </button>
             </div>
         </div>

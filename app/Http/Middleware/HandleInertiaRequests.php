@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Package;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -52,6 +53,7 @@ class HandleInertiaRequests extends Middleware
         ],
         'users' => fn()=>User::all(),
         'packages'=>fn()=>Package::all(),
+        'avatar'=>fn()=> Auth::check() && Auth::user()?->profile?->avatar !='' ? asset('storage/'.Auth::user()->profile->avatar) : asset('assets/img/admin.png'),
         ]);
     }
 }

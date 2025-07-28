@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\UserAuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SoftwareController;
@@ -35,7 +36,7 @@ Route::middleware('auth')->group(function(){
     })->name('user');
 
     //fetch response data
-    Route::get('/users/no_role',function(){
+    Route::get('/users-without-roles',function(){
         $users = User::doesntHave('roles')->get();
         return response()->json($users);
     })->name('users.no_role');
@@ -54,7 +55,10 @@ Route::middleware('auth')->group(function(){
         $packages = Package::all();
         return response()->json($packages);
     });
-
+ Route::get('/get_packages_payment',function(){
+        $packages = Package::has('softwares')->get();
+        return response()->json($packages);
+    });
 
     //Menus
     Route::resource('/software',SoftwareController::class);
@@ -63,10 +67,15 @@ Route::middleware('auth')->group(function(){
     Route::resource('/payment',PaymentController::class);
     Route::get('/subscription/payment/{subscription}',[PaymentController::class,'paySubscription'])->name('pay.subscription');
 
-
+    //user deafault password
+    Route::get('/default-password/{user}',[UserController::class,'setPassword'])->name('default.password');
+    Route::put('/user/{user}',[UserController::class,'updateUser'])->name('update.user');
     //Settings
     Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
     Route::put('/setting', [SettingController::class, 'update'])->name('setting.update');
+    Route::get('/profile/setting',[ProfileController::class,'profile_setting'])->name('profile.setting');
+    Route::post('/profile/update',[ProfileController::class,'update'])->name('profile.update');
+    Route::post('/profile/change-password',[ProfileController::class,'passwordUpdate'])->name('password.update');
 });
 
 

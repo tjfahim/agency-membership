@@ -46,8 +46,8 @@
       <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-gray-500 text-sm font-medium">Pending Payments</p>
-            <p class="text-2xl font-bold text-gray-800 mt-2">{{ summary.pending_payments }} tk</p>
+            <p class="text-gray-500 text-sm font-medium">Received Payments</p>
+            <p class="text-2xl font-bold text-gray-800 mt-2">{{ summary.received_payments }} tk</p>
           </div>
           <div class="p-3 rounded-full bg-orange-100 text-orange-600">
             <i class="fas fa-clock text-xl"></i>
@@ -156,7 +156,7 @@ const props = defineProps({
       total_users: 0,
       total_payments: 0,
       due_payments: 0,
-      pending_payments: 0,
+      received_payments: 0,
       total_softwares: 0,
       total_packages: 0,
       active_subscriptions: 0,

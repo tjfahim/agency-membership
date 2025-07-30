@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SubscriptionRequest;
 use App\Models\Package;
 use App\Models\Subscription;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -18,6 +19,17 @@ class SubscriptionController extends Controller
     {
         //
         $subscriptions = Subscription::select(['id', 'start_at', 'end_at', 'payment_status', 'user_id', 'package_id', 'assigned_by'])->with(['user:id,name', 'package:id,name,is_free', 'assignedBy:id,name'])->paginate(20);
+        $subscriptions->getCollection()->transform(function ($subscription) {
+            return [
+                'id' => $subscription->id,
+                'start_at' => $subscription->start_at->timezone('Asia/Dhaka')->toDayDateTimeString(),
+                'end_at' => $subscription->end_at->timezone('Asia/Dhaka')->toDayDateTimeString(),
+                'payment_status' => $subscription->payment_status,
+                'user' => $subscription->user,
+                'package' => $subscription->package,
+                'assigned_by' => $subscription->assignedBy,
+            ];
+        });
         $pagination = [
             'total' => $subscriptions->total(),
             'per_page' => $subscriptions->perPage(),
@@ -111,7 +123,7 @@ class SubscriptionController extends Controller
                 ]);
             }
             DB::commit();
-          } catch (\Exception $e) {
+        } catch (\Exception $e) {
             return back()->with('error', 'failed to update:' . $e->getMessage());
         }
 

@@ -15,10 +15,7 @@ class RoleSeeder extends Seeder
     {
         //
         $roles = [
-            [
-                'name' => 'Super Admin',
-                'slug' => 'super-admin',
-            ],
+
             [
                 'name' => 'Admin',
                 'slug' => 'admin',
@@ -26,7 +23,8 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Editor',
                 'slug' => 'editor',
-            ]
+            ],
+
         ];
         foreach($roles as $role){
             Role::create($role);

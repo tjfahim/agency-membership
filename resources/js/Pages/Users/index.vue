@@ -9,7 +9,8 @@
     </div>
 
     <div class="p-6">
-      <h1 class="text-2xl font-bold mb-4">User List</h1>
+      <div class="flex justify-between">
+        <h1 class="text-2xl font-bold mb-4">User List</h1>
 
       <button
         @click="toggleCreate"
@@ -17,10 +18,11 @@
       >
         Create User
       </button>
+      </div>
 
       <!-- Modals -->
       <CreateUser :createUserModal="createUserModal" @close="closeCreateModal" />
-      <EditUser :editUserModal="editUserModal" :User="User" @close="closeEditModal" />
+      <EditUser :editUserModal="editUserModal" :user="User" @close="closeEditModal" />
 
       <!-- Datatable -->
       <vue-good-table
@@ -41,7 +43,7 @@
                 @click="togglePassword(row.id)"
                 class="text-orange-500 hover:underline"
               >
-                <i class="fa fa-key mr-1"></i>Set Password
+                <i class="fa fa-key mr-1"></i>Reset Password
               </button>
               <button
                 @click="toggleEdit(row)"
@@ -74,7 +76,10 @@ import EditUser from '@/components/User/edit.vue'
 import { router } from '@inertiajs/vue3'
 import { VueGoodTable } from 'vue-good-table-next'
 import 'vue-good-table-next/dist/vue-good-table-next.css'
+import dayjs from 'dayjs'
 import axios from 'axios'
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import { route } from 'ziggy-js'
 
 const props = defineProps({
@@ -90,21 +95,30 @@ const showError = ref(false)
 const User = ref({})
 const isDelete = ref(false)
 const deletedId = ref(null)
+const users = ref([]);
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
 // Columns
 const columns = [
   { label: 'Name', field: 'name', sortable: true },
   { label: 'Email', field: 'email', sortable: true },
-  { label: 'Created', field: 'created_at_formatted', sortable: true },
+  { label: 'Created', field: 'created_at', sortable: true },
   { label: 'Actions', field: 'actions', sortable: false }
 ]
 
 // Computed filtered users
 const filteredUsers = computed(() => {
-  const data = props.users?.data || []
-  return isDelete.value && deletedId.value !== null
-    ? data.filter(u => u.id !== deletedId.value)
-    : data
+  const data = users.value || []
+  if(isDelete.value && deletedId.value !== null){
+  data.filter(u => u.id !== deletedId.value)
+  }
+  return data.map((d)=>({
+    ...d,
+    'Name': d.name ?? 'N/A',
+    'Email': d.email ?? 'N/A',
+    'Created': d.created_at ?? 'N/A',
+  }));
 })
 
 // Modal controls
@@ -122,7 +136,8 @@ const closeEditModal = () => {
   setTimeout(() => (editUserModal.value = false), 0)
 }
 const togglePassword = async (id) => {
-  const response = await axios.get(`/users/${id}`)
+  const response = await axios.get(`/users/${id}`);
+  console.log(response);
   User.value = response.data
   router.get(route('default.password', User.value))
 }
@@ -135,6 +150,7 @@ const deleteUser = (id) => {
     router.delete(`/users/${id}`, {
       onSuccess: () => {
         console.log('Deleted successfully')
+         router.visit(route('users.index'));
       }
     })
   }
@@ -155,8 +171,12 @@ const showErrorFlash = () => {
 }
 
 // Initial mount
-onMounted(() => {
-  if (props.flash?.success) showFlash()
+onMounted(async () => {
+  if (props.flash?.success) showFlash();
+  const response = await axios.get('/users-without-roles');
+  users.value = response.data;
+  console.log(users.value);
+  console.log(props.users);
 })
 
 // Watch flash props

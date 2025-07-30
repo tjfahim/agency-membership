@@ -12,7 +12,7 @@
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         <link rel= "stylesheet" href= "https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css" >
         @routes
-        @vite(['resources/js/app.js','resources/js/app.css'])
+        @vite(['resources/js/app.js','resources/css/app.css'])
         @inertiaHead
     </head>	
     <body class="sb-nav-fixed">

@@ -110,7 +110,7 @@
 </template>
 <script setup lang="ts">
 import MainLayout from '../../components/layouts/MainLayout.vue';
-import { useForm, usePage, Link } from '@inertiajs/vue3'
+import { useForm, usePage, Link, router } from '@inertiajs/vue3'
 import { ref, onMounted, watch, defineProps, toRaw } from 'vue';
 import axios from 'axios';
 const page = usePage();
@@ -168,6 +168,7 @@ const submitPayment = () => {
             form.reset();
             console.log('success');
             emit('close');
+            router.visit(route('payment.index'));
         },
         onError: () => {
             errors.value = form.errors;

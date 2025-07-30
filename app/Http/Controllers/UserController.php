@@ -53,7 +53,7 @@ class UserController extends Controller
         //
         $request->validate([
             'name' => ['required', 'string', 'min:4', 'max:50'],
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', Password::min(6)],
             'web_url' => ['required', 'url', 'min:5'],
         ]);
@@ -66,14 +66,19 @@ class UserController extends Controller
         ]);
 
         try {
+            $url = rtrim($request->web_url, '/') . '/api/membership/register';
+
             $response = Http::withHeaders([
-                'TECHLAB_API_TOKEN' => env('TECHLAB_API_TOKEN'),
-            ])->post($request->web_url . '/api/membership/register', [
+                'X-Techlab-Token' => env('TECHLAB_API_TOKEN'),
+            ])->post($url, [
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->password,
                 'status' => false,
             ]);
+
+            \Log::info('POSTing to: ' . $url);
+            \Log::info('response: ' . $response->body());
         } catch (\Exception $e) {
             return to_route('users.index')->with(
                 'error',
@@ -112,7 +117,7 @@ class UserController extends Controller
         //
         $request->validate([
             'name' => ['required', 'string', 'min:4', 'max:50'],
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'unique:users,email,' . $id],
             'password' => ['required', Password::min(6)],
         ]);
 
@@ -125,8 +130,9 @@ class UserController extends Controller
         return to_route('users.index')->with(['success' => 'User Updated Successfully']);
     }
 
-    public function updateUser(Request $request, User $user)
+    public function updateUser(Request $request, $email)
     {
+        $user = User::where('email', $email)->first();
         $rules = [
             'name' => ['required', 'string', 'min:4', 'max:50'],
             'email' => ['required', 'email'],
@@ -138,13 +144,29 @@ class UserController extends Controller
         $validated = $request->validate($rules);
 
         $updatedData = [
-            'name'=>$validated['name'],
-            'email'=>$validated['email'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
         ];
-        if(!empty($validated['password'])){
+        if (!empty($validated['password'])) {
             $updatedData['password'] = Hash::make($validated['password']);
         }
+        try {
+            $url = rtrim($user->web_url, '/') . '/api/membership/user/update/' . urlencode($user->email);
+
+            $response = Http::withHeaders([
+                'X-Techlab-Token' => env('TECHLAB_API_TOKEN'),
+            ])->put($url, $updatedData);
+
+            \Log::info('POSTing to: ' . $url);
+            \Log::info('response: ' . $response->body());
+        } catch (\Exception $e) {
+            return to_route('users.index')->with(
+                'error',
+                'Website url or api token is mismatched'
+            );
+        }
         $user->update($updatedData);
+
         return to_route('users.index')->with(['success' => 'User Updated Successfully']);
     }
     /**
@@ -153,7 +175,23 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         //
-        User::where('id', $id)->delete();
+         $user = User::where('id', $id)->first();
+        try {
+            $url = rtrim($user->web_url, '/') . '/api/membership/user/delete/' . $id;
+
+            $response = Http::withHeaders([
+                'X-Techlab-Token' => env('TECHLAB_API_TOKEN'),
+            ])->delete($url);
+             $user->delete();   
+            \Log::info('POSTing to: ' . $url);
+            \Log::info('response: ' . $response->body());
+        } catch (\Exception $e) {
+            return to_route('users.index')->with(
+                'error',
+                'Website url or api token is mismatched'
+            );
+        }
+        // User::where('id', $id)->delete();
         return to_route('users.index')->with(['success' => "User Deleted Successfully"]);
     }
 
@@ -164,8 +202,27 @@ class UserController extends Controller
             $user->update([
                 'password' => $settings->default_password
             ]);
+            //other softwares users password set to defaults
+            $data = ['password' => $settings->default_password];
+            try {
+                $url = rtrim($user->web_url, '/') . '/api/membership/user/default_password/' . urlencode($user->email);
+                $response = Http::withHeaders([
+                    'X-Techlab-Token' => env('TECHLAB_API_TOKEN'),
+                ])->put($url, $data);
+
+                \Log::info('POSTing to: ' . $url);
+                \Log::info('response: ' . $response->body());
+            } catch (\Exception $e) {
+                
+                \Log::info('error: ' . $e->getMessage());
+                return to_route('users.index')->with(
+                    'error',
+                    'Website url or api token is mismatched'
+                );
+            }
             return redirect()->route('users.index')->with('success', 'Default password has been set.');
         }
+
         return redirect()->route('users.index')->with('error', 'No record has been found to set default password.');
     }
 }

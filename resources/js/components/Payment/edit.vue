@@ -98,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { useForm, usePage, Link } from '@inertiajs/vue3'
+import { useForm, usePage, Link, router } from '@inertiajs/vue3'
 import { ref, watch, defineProps, onMounted, computed } from 'vue'
 
 const page = usePage()
@@ -159,6 +159,7 @@ const submitEditPayment = () => {
       console.log('emit close triggered');
       form.reset()
       emit('close')
+      router.visit(route('payment.index'));
     },
     onError: () => {
       errors.value = form.errors

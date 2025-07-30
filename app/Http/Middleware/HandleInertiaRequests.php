@@ -54,6 +54,7 @@ class HandleInertiaRequests extends Middleware
         'users' => fn()=>User::all(),
         'packages'=>fn()=>Package::all(),
         'avatar'=>fn()=> Auth::check() && Auth::user()?->profile?->avatar !='' ? asset('storage/'.Auth::user()->profile->avatar) : asset('assets/img/admin.png'),
+        'user' => fn()=>Auth::user(),
         ]);
     }
 }

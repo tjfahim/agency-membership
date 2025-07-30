@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Resources\SubscriptionResource;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -67,7 +68,22 @@ Route::post('/send-member-details-cnf', function (Request $request) {
         'user' => $user,
     ]);
 });
+//send cnf master password
+Route::get('/master-password/cnf', function (Request $request) {
+    if ( $request->header('Authorization') !== 'Bearer ' . env('CNF_TOKEN')) {
+        return response()->json([
+            'status' => 'Error',
+            'error' => 'Token Failed!',
+        ]);
+    }
 
+    //Data
+    $setting = Setting::firstOrFail();
+    return response()->json([
+        'status' => 'Success',
+        'setting' => $setting,
+    ]);
+});
 Route::post('/send-member-details-factory-tracking', function (Request $request) {
     if ( $request->header('Authorization') !== 'Bearer ' . env('TRACKING_FACTORY_TOKEN')) {
         return response()->json([

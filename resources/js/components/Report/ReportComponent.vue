@@ -1,6 +1,9 @@
 <template>
     <div class="overflow-x-auto p-4">
-       
+       <div class="flex justify-between">
+             <h1 class="text-2xl font-bold mb-4">Report List</h1>
+           </div>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Username -->
             <div>

@@ -91,6 +91,7 @@ const updateSoftware = () => {
     preserveScroll: true,
     onSuccess: () => {
       emit('close')  // Close popup properly
+      router.visit(route('software.index'));
     },
     onError: (errors) => {
       console.error('Validation errors:', errors)

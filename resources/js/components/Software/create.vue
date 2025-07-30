@@ -87,6 +87,7 @@ function submitSoftware() {
     onSuccess: () => {
       form.reset()
       emit('close') // close the modal in parent
+      router.visit(route('software.index'));
     },
     onError: () => {
       errors.value = form.errors

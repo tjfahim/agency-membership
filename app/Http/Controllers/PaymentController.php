@@ -102,7 +102,7 @@ class PaymentController extends Controller
             return to_route('payment.index')->with(['success' => "Payment and Subscription created successfully!"]);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('throws error' . $e->getMessage());
+            Log::error('throws error', $e->getMessage());
             return to_route('payment.index')->with(['error' => 'Something went wrong!' . $e->getMessage()]);
         }
 
@@ -184,7 +184,7 @@ class PaymentController extends Controller
             return to_route('payment.index')->with(['success' => "Payment and Subscription updated successfully!"]);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error :' . $e->getMessage());
+           Log::error('Failed to change status', ['exception' => $e->getMessage()]);
             return to_route('payment.index')->with(['error ' => 'Something went wrong!']);
         }
     }

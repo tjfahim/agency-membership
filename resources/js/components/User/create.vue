@@ -128,7 +128,8 @@ const submitForm = async () => {
     onSuccess: () => {
       showMessage.value = true
       form.reset()
-      emit('close')
+      emit('close');
+      router.visit(route('users.index'));
     },
     onError: () => {
       showMessage.value = true

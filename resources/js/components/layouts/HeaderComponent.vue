@@ -8,10 +8,11 @@
     <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
       <!-- Optional search -->
     </form>
-
+    
     <!-- Navbar Right Menu -->
     <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown flex space-x-6">
+          <div class="!text-amber-600 mt-[25px] mr-0">{{ $page?.props?.user?.name }}</div>
         <a
           class="nav-link dropdown-toggle !flex justify-center items-center"
           id="navbarDropdown"
@@ -58,9 +59,13 @@
 </template>
 
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-
+import { Link ,usePage} from '@inertiajs/vue3';
+import {onMounted,ref} from 'vue';
+import axios from 'axios';
 defineOptions({
   name: 'Header',
 });
+
+const page = usePage();
+
 </script>

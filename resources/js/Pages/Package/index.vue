@@ -130,6 +130,7 @@ function deletePackage(id) {
     router.delete(`/package/${id}`, {
       onSuccess: () => {
         console.log("Deleted Successfully");
+         router.visit(route('package.index'));
         // Optionally show flash message on success if backend sends it
       },
     });
@@ -187,6 +188,6 @@ const changePage = (page) => {
 }
 
 table.vgt-table td {
-  padding: 0.2em;
+    padding: 0.1em !important;
 }
 </style>

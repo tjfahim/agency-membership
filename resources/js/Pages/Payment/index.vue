@@ -8,12 +8,14 @@
             {{ flash.error }}
         </div>
         <div class="p-6 relative">
-            <h1 class="text-2xl font-bold mb-4">Payment List</h1>
+           <div class="flex justify-between">
+             <h1 class="text-2xl font-bold mb-4">Payment List</h1>
 
             <Button @click="createModal"
                 class="block px-4 py-2 ml-5 !text-slate-200 !no-underline rounded bg-amber-600 hover:bg-amber-700 text-lg mb-4">
                 Create Payment
             </Button>
+           </div>
 
             <!-- Create payment modal -->
             <CreatePayment :popUpModalCreate="popUpModalCreate" @close="handleCreateModalClose" />
@@ -138,7 +140,8 @@ function deletePayment(id) {
             onSuccess: () => {
                 console.log('Deleted successfully')
             },
-        })
+        });
+        router.visit(route('payment.index'));
     }
 }
 
@@ -216,6 +219,6 @@ const changePage = (page) => {
 }
 
 table.vgt-table td {
-    padding: 0.2em;
+    padding: 0.2em !important;
 }
 </style>

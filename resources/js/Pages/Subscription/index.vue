@@ -100,6 +100,7 @@ function deleteSubscription(id) {
     router.delete(`/subscription/${id}`, {
       onSuccess: () => {
         console.log('Deleted successfully')
+         router.visit(route('subscription.index'));
       },
     })
   }
@@ -119,8 +120,8 @@ const filteredSubscriptions = computed(() => {
     user_name: sub.user?.name ?? 'N/A',
     package_name: sub.package?.name ?? 'N/A',
     assigned_by_name: sub.assigned_by?.name ?? 'N/A',
-    start_at : sub.start_at ? dayjs(sub.start_at).format('DD MMM YYYY h:mm A') :'N/A',
-    end_at : sub.end_at ? dayjs(sub.end_at).format('DD MMM YYYY h:mm A') : 'N/A',
+    start_at : sub.start_at ??'N/A',
+    end_at : sub.end_at ??'N/A',
   }))
 })
 
@@ -167,6 +168,6 @@ const changePage = (page) => {
   border: none;
 }
 table.vgt-table td {
-  padding: 0.2em !important;
+  padding: 0.1em !important;
 }
 </style>

@@ -2,17 +2,11 @@
     <div v-if="popUpModalView" class="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
 
         <div class="absolute inset-0 "  @click="$emit('close')"></div>
-        <form class="!bg-white  rounded-2xl shadow space-y-4 p-6 w-1/2  relative" @click.stop>
+        <form class="bg-[#0F1551]  rounded-2xl shadow space-y-4 p-6 w-1/2  relative" @click.stop>
             <!-- Name -->
             <div class="flex justify-between items-center">
-                <div class="header w-full flex justify-end ">
-                    <h2
-                        class="text-2xl font-bold !text-blue-900 rounded-lg shadow-md px-2 py-1 text-center mb-6 inline-block pb-2 ">
-                        View Package
-                    </h2>
-                </div>
-                <div class="back w-1/2 flex justify-end">
-                    <Link href="/package" class="text-gray-600 hover:text-gray-800 flex items-center">
+                <div class="back w-full flex justify-end">
+                    <Link href="/package" class="!text-amber-600 hover:!text-amber-700 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20"
                         fill="currentColor">
                         <path fill-rule="evenodd"
@@ -24,30 +18,30 @@
                 </div>
             </div>
         <!--View Package-->
-            <div class="w-full mx-auto p-6 bg-white rounded-2xl shadow space-y-4 mt-2">
-                <h3 class="text-center my-1 text-md">Our Package</h3>
+            <div class="w-full mx-auto p-6  rounded-2xl shadow space-y-4 mt-2">
+                <h3 class="text-center my-1 text-md text-white">Our Package</h3>
                 <div>
-                    <label class="block text-lg font-medium text-gray-600 mb-1">Name:</label>
-                    <span class="text-slate-800 text-lg font-bold ml-1"> {{ companyPackage.name }}</span>
+                    <label class="block text-lg font-medium text-amber-600 mb-1">Name:</label>
+                    <span class="text-white text-lg font-bold ml-1"> {{ companyPackage.name }}</span>
                 </div>
 
                 <div>
-                    <label class="block text-lg font-medium text-gray-600 mb-1">Duration Type:</label>
-                    <span class="text-slate-800 text-lg font-bold ml-1"> {{ companyPackage.duration_type }}</span>
+                    <label class="block text-lg font-medium text-amber-600 mb-1">Duration Type:</label>
+                    <span class="text-white text-lg font-bold ml-1"> {{ companyPackage.duration_type }}</span>
                 </div>
                 <div>
-                 <label  class="block text-lg font-medium text-gray-600 mb-1">Price:</label>
-                    <span class="text-slate-800 text-lg font-bold ml-1"> {{ companyPackage.price }}</span>
+                 <label  class="block text-lg font-medium text-amber-600 mb-1">Price:</label>
+                    <span class="text-white text-lg font-bold ml-1"> {{ companyPackage.price }}</span>
                 </div>
                 <div class="flex items-center space-x-2">
                     
-                    <label for="is_free" class="text-lg text-gray-700">Free:</label>
+                    <label for="is_free" class="text-lg font-bold text-amber-700">Free:</label>
                     <span v-if="companyPackage.is_free" class="text-lg text-lime-600 ml-2">Yes</span><span class="text-lg text-red-600 ml-2" v-else>No</span>
                 </div>
-                 <h3 class="text-center my-2">Our Softwares</h3>
+                 <h3 class="text-center my-2 text-white">Our Softwares</h3>
                 <div class="flex flex-wrap gap-2 my-4" v-if="companySoftwares.length">
                     <span v-for="software in companySoftwares" :key="software.id"
-                        class="inline-flex items-center px-3 py-1 rounded-full text-lg font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition duration-200">
+                        class="inline-flex items-center px-3 py-1 rounded-full text-lg font-medium bg-blue-100 text-amber-600 transition duration-200">
                         {{ software.name }}
                     </span>
                 </div>

@@ -39,7 +39,7 @@
       <div>
         <label class="block text-sm font-medium text-gray-700">Email</label>
         <input
-          v-model="form.email"
+          v-model="form.email" disabled
           type="email"
           placeholder="you@example.com"
           class="input"
@@ -86,15 +86,17 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { useForm, usePage } from '@inertiajs/vue3'
 
  const props = defineProps({
     profile:Object,
 });
+const page = usePage();
+
 const form = useForm({
   avatar: null,
   phone: props.profile.phone || '',
-  email: props.profile.email || '',
+  email: page.props.user.email || '',
   address: props.profile.address || '',
   dob: props.profile.dob || '',
 })

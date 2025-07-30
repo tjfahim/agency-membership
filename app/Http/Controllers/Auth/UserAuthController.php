@@ -19,11 +19,14 @@ class UserAuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
- 
+        
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
- 
-            return to_route('dashboard');
+            $user = Auth::user();
+            if($user->hasRole('admin')){
+                $request->session()->regenerate();
+                return to_route('dashboard');
+            }
+            return to_route('view_login');
         }
  
         return back()->withErrors([
@@ -31,11 +34,11 @@ class UserAuthController extends Controller
         ])->onlyInput('error');
     }
 
-    public function register (Request $request) :RedirectResponse
+    public function register (Request $request) 
     {
         $request->validate([
             'name'=>['required', 'string', 'min:4', 'max:50'],
-            'email'=>['required','email'],
+            'email'=>['required','email','unique:users,email'],
             'password'=>['required' ,Password::min(6)],
         ]);
 

@@ -72,20 +72,20 @@
 
 <script setup>
 import { ref, defineProps, defineEmits, watch } from 'vue'
-import { useForm, Link } from '@inertiajs/vue3'
+import { useForm, Link,router  } from '@inertiajs/vue3'
 
 const emit = defineEmits(['close'])
 
 const props = defineProps({
-    User: Object,
+    user: Object,
     editUserModal: Boolean,
 })
 
 const form = useForm({
-    name: props.User?.name || '',
-    email: props.User?.email || '',
+    name: props.user?.name || '',
+    email: props.user?.email || '',
     password: '',
-    created_at: props.User?.created_at || '',
+    created_at: props.user?.created_at || '',
 })
 
 const serverError = ref(false)
@@ -97,10 +97,12 @@ const togglePasswordVisibility = () => {
 }
 
 const editUser = () => {
-    form.put(route('update.user', props.User.id), {
+    console.log(props.user.email)
+    form.put(`user/${props.user.email}`, {
         onSuccess: () => {
             form.reset('password') // Optional: reset only password
-            emit('close')
+            emit('close');
+            router.visit(route('users.index'));
         },
         onError: () => {
             serverError.value = true; 
@@ -113,7 +115,7 @@ const editUser = () => {
     })
 }
 
-watch(() => props.User, (newUser) => {
+watch(() => props.user, (newUser) => {
     if (newUser) {
         form.name = newUser.name || ''
         form.email = newUser.email || ''

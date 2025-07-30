@@ -7,11 +7,14 @@
                     <form @submit.prevent="register" class="space-y-4">
                         <div>
                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Name
-                                address</label>
+                                </label>
                             <input id="name" type="text" v-model="form.name"
                                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="" required />
                         </div>
+                         <p v-if="form.errors.name" class="text-red-600 text-sm mt-1">
+                    {{form.errors.name }}
+                </p>
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email
                                 address</label>
@@ -19,12 +22,18 @@
                                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="you@example.com" required />
                         </div>
+                         <p v-if="form.errors.email" class="text-red-600 text-sm mt-1">
+                    {{form.errors.email }}
+                </p>
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                             <input id="password" type="password" v-model="form.password"
                                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="********" required />
                         </div>
+                         <p v-if="form.errors.password" class="text-red-600 text-sm mt-1">
+                    {{form.errors.password }}
+                </p>
                         <div class="flex items-center justify-between">
                             <label class="flex items-center text-sm text-gray-600">
                                 <input type="checkbox" class="mr-2" />

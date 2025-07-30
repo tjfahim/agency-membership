@@ -42,4 +42,9 @@ class Subscription extends Model
     {
         return $this->end_at ? Carbon::parse($this->end_at)->format('F j, Y') : null;
     }
+
+    protected $casts = [
+    'start_at' => 'datetime',
+    'end_at' => 'datetime',
+];
 }

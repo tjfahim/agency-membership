@@ -22,13 +22,13 @@ class UserStatus
         if (!empty($this->user->web_url)) {
            try{
             $response = Http::withHeaders([
-                'TECHLAB_API_TOKEN' => env('TECHLAB_API_TOKEN'),
+                'X-Techlab-Token' => env('TECHLAB_API_TOKEN'),
             ])->put($this->user->web_url . "/api/user/change-status/" . $this->user->email, [
                 'status' => true,
             ]);
             \Log::info("Status Changed",["user status is activated. email: "=>$this->user->email,"response: "=>$response->json()]);
            }catch(\Exception $e){
-            \Log::error("Failed to change status for {$this->user->name} : ",$e->getMessage());
+            \Log::error('Failed to change status', ['exception' => $e->getMessage()]);
             return to_route('payment.index')->with(['error' => 'Something went wrong!' . $e->getMessage()]);
            }
         }
